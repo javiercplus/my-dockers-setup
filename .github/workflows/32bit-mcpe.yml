@@ -53,17 +53,17 @@ jobs:
             -Wno-dev
           make -j$(nproc)
 
-      - name: Empaquetar con linuxdeploy
+      - name: Empaquetar con linuxdeploy y appimagetool
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
           ARCH: i386
         run: |
-          # Descargar linuxdeploy y el plugin en sus versiones nativas de 32 bits
+          # Descargar herramientas nativas de 32 bits (AppImageKit usa la nomenclatura i686)
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-i386.AppImage
-          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-i386.AppImage
-          chmod +x linuxdeploy-i386.AppImage linuxdeploy-plugin-appimage-i386.AppImage
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
+          chmod +x linuxdeploy-i386.AppImage appimagetool-i686.AppImage
 
-          # Crear recursos básicos para la integración de escritorio
+          # Crear recursos básicos
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
           cat << 'EOF' > AppDir/usr/share/applications/mcpelauncher-cli.desktop
           [Desktop Entry]
@@ -75,20 +75,22 @@ jobs:
           Terminal=true
           EOF
           
-          # Crear un SVG mínimo válido para evitar fallos de validación (Error 8)
+          # Crear un SVG con un rectángulo básico para asegurar que pase cualquier validación estricta de formato
           cat << 'EOF' > AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>
           EOF
 
-          # Ejecutar linuxdeploy de 32 bits
+          # 1. Recopilar dependencias y armar la estructura (sin invocar plugins)
           ./linuxdeploy-i386.AppImage \
             --appdir AppDir \
             -e build/mcpelauncher-client \
             -e build/mcpelauncher-error \
             -e build/mcpelauncher-extract \
             -d AppDir/usr/share/applications/mcpelauncher-cli.desktop \
-            -i AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg \
-            --output appimage
+            -i AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
+
+          # 2. Generar el AppImage explícitamente
+          ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
 
       - name: Subir AppImage
         uses: actions/upload-artifact@v4
