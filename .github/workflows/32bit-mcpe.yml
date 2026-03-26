@@ -64,6 +64,9 @@ jobs:
           
           ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
           
+          # Eliminar libc.so.6 antes de empaquetar para asegurar la portabilidad
+          rm -f AppDir/usr/lib/libc.so.6
+          
           cat << 'EOF' > AppDir/AppRun
           #!/bin/sh
           HERE="$(dirname "$(readlink -f "${0}")")"
@@ -93,6 +96,7 @@ jobs:
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
           chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
+          
       - name: Subir AppImage
         uses: actions/upload-artifact@v4
         with:
