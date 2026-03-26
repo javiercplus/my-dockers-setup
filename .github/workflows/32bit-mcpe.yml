@@ -25,6 +25,10 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
+          
+          # Eliminar paquetes de 64 bits preinstalados que causan conflicto de multiarquitectura
+          sudo apt-get remove -y libglib2.0-dev
+          
           sudo apt-get install -y --no-install-recommends \
             ca-certificates build-essential git curl cmake clang ninja-build \
             gcc-multilib g++-multilib \
