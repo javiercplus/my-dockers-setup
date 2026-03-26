@@ -1,10 +1,7 @@
 name: Compilar mcpelauncher 32bit (Sin GUI)
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -61,10 +58,10 @@ jobs:
           APPIMAGE_EXTRACT_AND_RUN: 1
           ARCH: i386
         run: |
-          # Descargar linuxdeploy y el plugin para 64 bits (el host)
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
-          chmod +x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-appimage-x86_64.AppImage
+          # Descargar linuxdeploy y el plugin en sus versiones nativas de 32 bits
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-i386.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-i386.AppImage
+          chmod +x linuxdeploy-i386.AppImage linuxdeploy-plugin-appimage-i386.AppImage
 
           # Crear recursos básicos para la integración de escritorio
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
@@ -78,13 +75,13 @@ jobs:
           Terminal=true
           EOF
           
-          # Crear un SVG mínimo válido para evitar fallos de validación
+          # Crear un SVG mínimo válido para evitar fallos de validación (Error 8)
           cat << 'EOF' > AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>
           EOF
 
-          # Ejecutar linuxdeploy
-          ./linuxdeploy-x86_64.AppImage \
+          # Ejecutar linuxdeploy de 32 bits
+          ./linuxdeploy-i386.AppImage \
             --appdir AppDir \
             -e build/mcpelauncher-client \
             -e build/mcpelauncher-error \
