@@ -34,14 +34,14 @@ jobs:
             libxss-dev libxtst-dev libgl1-mesa-dev libegl1-mesa-dev libgles2-mesa-dev \
             libvulkan-dev vulkan-validationlayers libdrm-dev libgbm-dev \
             libudev-dev libevdev-dev libusb-1.0-0-dev libdbus-1-dev libbluetooth-dev bluez \
-            libibus-1.0-dev libxkbcommon-dev libzip-dev libcups2-dev \
+            libibus-1.0-dev libxkbcommon-dev libcups2-dev \
             libwayland-dev libunwind-dev \
             libcurl4-openssl-dev:i386 libssl-dev:i386 libasound2-dev:i386 libpulse-dev:i386 libjack-jackd2-dev:i386 \
             libx11-dev:i386 libxi-dev:i386 libxext-dev:i386 libxfixes-dev:i386 libxcursor-dev:i386 libxrandr-dev:i386 \
             libxss-dev:i386 libxtst-dev:i386 libgl1-mesa-dev:i386 libegl1-mesa-dev:i386 libgles2-mesa-dev:i386 \
             libvulkan-dev:i386 libdrm-dev:i386 libgbm-dev:i386 libudev-dev:i386 libevdev-dev:i386 libusb-1.0-0-dev:i386 \
             libdbus-1-dev:i386 libbluetooth-dev:i386 libibus-1.0-dev:i386 libxkbcommon-dev:i386 \
-            libzip-dev:i386 libcups2-dev:i386 libwayland-dev:i386 libunwind-dev:i386
+            libcups2-dev:i386 libwayland-dev:i386 libunwind-dev:i386
 
       - name: Compilación con Clang y Optimizaciones
         run: |
