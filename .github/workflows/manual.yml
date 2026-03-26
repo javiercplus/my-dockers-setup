@@ -1,4 +1,4 @@
-name: Compilar mcpelauncher 32bit(Qt5 - Manifest Repo)
+name: Compilar mcpelauncher 32bit (Sin GUI)
 
 on:
   push:
@@ -31,13 +31,13 @@ jobs:
       - name: Compilación con Clang y Optimizaciones
         run: |
           docker run --rm -v ${{ github.workspace }}:/project mcpelauncher-builder /bin/bash -c "
-            # Instalar dependencias faltantes identificadas en el log
             apt-get update && apt-get install -y zlib1g-dev:i386 libpng-dev:i386
             
             mkdir -p build && cd build
             CC=clang CXX=clang++ cmake .. \
               -DENABLE_DEV_PATHS=OFF \
-              -DBUILD_UI=ON \
+              -DBUILD_UI=OFF \
+              -DBUILD_WEBVIEW=OFF \
               -DBUILD_CLIENT=ON \
               -DCURL_EXT_EXTRA_OPTIONS=-DCURL_USE_LIBPSL=OFF \
               -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -50,17 +50,15 @@ jobs:
               -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
               -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
               -Wno-dev
-            make -j$(nproc)
+            make -j\$(nproc)
           "
 
       - name: Subir Binarios
         uses: actions/upload-artifact@v4
         with:
-          name: mcpelauncher-qt5-32bit
+          name: mcpelauncher-cli-32bit
           path: |
             build/mcpelauncher-client
-            build/mcpelauncher-ui-qt/mcpelauncher-ui-qt
-            build/mcpelauncher-webview
             build/mcpelauncher-error
             build/mcpelauncher-extract
           if-no-files-found: warn
