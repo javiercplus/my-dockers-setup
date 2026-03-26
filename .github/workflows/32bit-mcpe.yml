@@ -58,19 +58,15 @@ jobs:
           APPIMAGE_EXTRACT_AND_RUN: 1
           ARCH: i386
         run: |
-          # Crear estructura interna
           mkdir -p AppDir/usr/bin AppDir/usr/lib AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
           
-          # Copiar binarios compilados
-          cp build/mcpelauncher-client AppDir/usr/bin/
-          cp build/mcpelauncher-error AppDir/usr/bin/
-          cp build/mcpelauncher-extract AppDir/usr/bin/
+          cp build/mcpelauncher-client/mcpelauncher-client AppDir/usr/bin/
+          cp build/mcpelauncher-error/mcpelauncher-error AppDir/usr/bin/
+          cp build/mcpelauncher-extract/mcpelauncher-extract AppDir/usr/bin/
           
-          # Resolver y copiar dependencias dinámicas (.so) replicando a linuxdeploy
           ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
           ldd AppDir/usr/bin/mcpelauncher-extract | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
           
-          # Crear script de ejecución
           cat << 'EOF' > AppDir/AppRun
           #!/bin/sh
           HERE="$(dirname "$(readlink -f "${0}")")"
@@ -79,7 +75,6 @@ jobs:
           EOF
           chmod +x AppDir/AppRun
           
-          # Crear recursos de integración
           cat << 'EOF' > AppDir/usr/share/applications/mcpelauncher-cli.desktop
           [Desktop Entry]
           Type=Application
@@ -94,7 +89,6 @@ jobs:
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>
           EOF
 
-          # Descargar appimagetool y generar el paquete
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
           chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
