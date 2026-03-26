@@ -61,7 +61,6 @@ jobs:
           mkdir -p AppDir/usr/bin AppDir/usr/lib AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
           
           cp build/mcpelauncher-client/mcpelauncher-client AppDir/usr/bin/
-          cp build/mcpelauncher-error/mcpelauncher-error AppDir/usr/bin/
           cp build/mcpelauncher-extract/mcpelauncher-extract AppDir/usr/bin/
           
           ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
