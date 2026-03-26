@@ -97,5 +97,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mcpelauncher-cli-32bit-appimage
-          path: MCPELauncher_CLI-*-i386.AppImage
+          path: mcpelauncher-cli-32bit.AppImage
           if-no-files-found: error
