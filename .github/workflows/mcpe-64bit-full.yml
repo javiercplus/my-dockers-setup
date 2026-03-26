@@ -1,8 +1,6 @@
 name: Compilar mcpelauncher WAYLAND(Qt6 - Manifest Repo)
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
