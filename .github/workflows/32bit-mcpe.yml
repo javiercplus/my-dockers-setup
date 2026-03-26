@@ -25,10 +25,6 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          
-          # Eliminar paquetes de 64 bits preinstalados que causan conflicto de multiarquitectura
-          sudo apt-get remove -y libglib2.0-dev
-          
           sudo apt-get install -y --no-install-recommends \
             ca-certificates build-essential git curl cmake clang ninja-build \
             gcc-multilib g++-multilib \
@@ -38,9 +34,9 @@ jobs:
             libxcursor-dev:i386 libxrandr-dev:i386 libxss-dev:i386 libxtst-dev:i386 \
             libgl1-mesa-dev:i386 libegl1-mesa-dev:i386 libgles2-mesa-dev:i386 \
             libvulkan-dev:i386 libdrm-dev:i386 libgbm-dev:i386 libudev-dev:i386 \
-            libevdev-dev:i386 libusb-1.0-0-dev:i386 libdbus-1-dev:i386 \
-            libbluetooth-dev:i386 libibus-1.0-dev:i386 libxkbcommon-dev:i386 \
-            libcups2-dev:i386 libwayland-dev:i386 libunwind-dev:i386
+            libevdev-dev:i386 libusb-1.0-0-dev:i386 \
+            libxkbcommon-dev:i386 libcups2-dev:i386 \
+            libwayland-dev:i386 libunwind-dev:i386
 
       - name: Compilación con Clang y Optimizaciones
         run: |
