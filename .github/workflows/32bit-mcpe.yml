@@ -53,18 +53,33 @@ jobs:
             -Wno-dev
           make -j$(nproc)
 
-      - name: Empaquetar con linuxdeploy y appimagetool
+      - name: Empaquetar AppImage manualmente
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
           ARCH: i386
         run: |
-          # Descargar herramientas nativas de 32 bits (AppImageKit usa la nomenclatura i686)
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-i386.AppImage
-          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
-          chmod +x linuxdeploy-i386.AppImage appimagetool-i686.AppImage
-
-          # Crear recursos básicos
-          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
+          # Crear estructura interna
+          mkdir -p AppDir/usr/bin AppDir/usr/lib AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
+          
+          # Copiar binarios compilados
+          cp build/mcpelauncher-client AppDir/usr/bin/
+          cp build/mcpelauncher-error AppDir/usr/bin/
+          cp build/mcpelauncher-extract AppDir/usr/bin/
+          
+          # Resolver y copiar dependencias dinámicas (.so) replicando a linuxdeploy
+          ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
+          ldd AppDir/usr/bin/mcpelauncher-extract | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
+          
+          # Crear script de ejecución
+          cat << 'EOF' > AppDir/AppRun
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "${0}")")"
+          export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+          exec "${HERE}/usr/bin/mcpelauncher-client" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+          
+          # Crear recursos de integración
           cat << 'EOF' > AppDir/usr/share/applications/mcpelauncher-cli.desktop
           [Desktop Entry]
           Type=Application
@@ -75,21 +90,13 @@ jobs:
           Terminal=true
           EOF
           
-          # Crear un SVG con un rectángulo básico para asegurar que pase cualquier validación estricta de formato
           cat << 'EOF' > AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>
           EOF
 
-          # 1. Recopilar dependencias y armar la estructura (sin invocar plugins)
-          ./linuxdeploy-i386.AppImage \
-            --appdir AppDir \
-            -e build/mcpelauncher-client \
-            -e build/mcpelauncher-error \
-            -e build/mcpelauncher-extract \
-            -d AppDir/usr/share/applications/mcpelauncher-cli.desktop \
-            -i AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
-
-          # 2. Generar el AppImage explícitamente
+          # Descargar appimagetool y generar el paquete
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
+          chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
 
       - name: Subir AppImage
