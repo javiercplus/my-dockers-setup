@@ -86,10 +86,13 @@ jobs:
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>
           EOF
 
+          # Copiar el archivo desktop y el icono a la raíz de AppDir para appimagetool
+          cp AppDir/usr/share/applications/mcpelauncher-cli.desktop AppDir/
+          cp AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg AppDir/
+
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
           chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
-
       - name: Subir AppImage
         uses: actions/upload-artifact@v4
         with:
