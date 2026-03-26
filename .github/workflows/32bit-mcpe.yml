@@ -56,12 +56,42 @@ jobs:
             -Wno-dev
           make -j$(nproc)
 
-      - name: Subir Binarios
+      - name: Empaquetar con linuxdeploy
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: 1
+          ARCH: i386
+        run: |
+          # Descargar linuxdeploy y el plugin para 32 bits
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-i386.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-i386.AppImage
+          chmod +x linuxdeploy-i386.AppImage linuxdeploy-plugin-appimage-i386.AppImage
+
+          # Crear recursos básicos para la integración de escritorio
+          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
+          cat << 'EOF' > AppDir/usr/share/applications/mcpelauncher-cli.desktop
+          [Desktop Entry]
+          Type=Application
+          Name=MCPELauncher_CLI
+          Exec=mcpelauncher-client
+          Icon=mcpelauncher
+          Categories=Game;
+          Terminal=true
+          EOF
+          touch AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
+
+          # Ejecutar linuxdeploy
+          ./linuxdeploy-i386.AppImage \
+            --appdir AppDir \
+            -e build/mcpelauncher-client \
+            -e build/mcpelauncher-error \
+            -e build/mcpelauncher-extract \
+            -d AppDir/usr/share/applications/mcpelauncher-cli.desktop \
+            -i AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg \
+            --output appimage
+
+      - name: Subir AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: mcpelauncher-cli-32bit
-          path: |
-            build/mcpelauncher-client
-            build/mcpelauncher-error
-            build/mcpelauncher-extract
-          if-no-files-found: warn
+          name: mcpelauncher-cli-32bit-appimage
+          path: MCPELauncher_CLI-*-i386.AppImage
+          if-no-files-found: error
