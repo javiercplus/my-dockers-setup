@@ -17,8 +17,13 @@ jobs:
 
       - name: Configurar arquitectura i386 e instalar dependencias
         run: |
+          # Evitar que apt actualice paquetes críticos durante la instalación
+          sudo apt-mark hold python3 python3-minimal grub-common grub-efi-amd64-bin shim-signed || true
+          
           sudo dpkg --add-architecture i386
           sudo apt-get update
+          
+          # Instalar dependencias sin libglib2.0-dev:i386 primero
           sudo apt-get install -y --no-install-recommends \
             ca-certificates build-essential git curl cmake clang ninja-build \
             gcc-multilib g++-multilib \
@@ -31,6 +36,9 @@ jobs:
             libevdev-dev:i386 libusb-1.0-0-dev:i386 \
             libxkbcommon-dev:i386 libcups2-dev:i386 \
             libwayland-dev:i386 libunwind-dev:i386
+          
+          # Intentar instalar libglib2.0-dev:i386 al final (puede fallar intermitentemente)
+          sudo apt-get install -y libglib2.0-dev:i386 || echo "⚠️ libglib2.0-dev:i386 no disponible, continuando..."
 
       - name: Compilación con Clang y Optimizaciones
         run: |
