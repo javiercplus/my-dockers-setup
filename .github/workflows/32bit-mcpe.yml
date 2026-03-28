@@ -60,22 +60,29 @@ jobs:
         run: |
           mkdir -p AppDir/usr/bin AppDir/usr/lib AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/scalable/apps
           
+          # 1. Copiar el binario
           cp build/mcpelauncher-client/mcpelauncher-client AppDir/usr/bin/
           
-          ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -vn '{}' AppDir/usr/lib/ || true
+          # 2. Lista de exclusión (librerías que NUNCA deben ir en el AppImage)
+          # Incluye GLIBC, libstdc++, libgcc_s y drivers gráficos base
+          EXCLUDE="libc.so.6|libm.so.6|librt.so.1|libdl.so.2|libpthread.so.0|libgcc_s.so.1|libstdc++.so.6|libselinux.so.1|libresolv.so.2|libz.so.1|libGL.so.1|libdrm.so.2|libX11.so.6|libasound.so.2"
+
+          # 3. Copiar dependencias preservando enlaces simbólicos (-d)
+          # Buscamos las rutas reales y las copiamos correctamente
+          ldd AppDir/usr/bin/mcpelauncher-client | grep "=> /" | grep -vE "$EXCLUDE" | awk '{print $3}' | xargs -I '{}' cp -ad '{}' AppDir/usr/lib/
           
-          # Eliminar libc.so.6 antes de empaquetar para asegurar la portabilidad
-          rm -f AppDir/usr/lib/libc.so.6
-          
+          # 4. Crear AppRun robusto
           cat << 'EOF' > AppDir/AppRun
           #!/bin/sh
           HERE="$(dirname "$(readlink -f "${0}")")"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+          # Ejecutar el binario
           exec "${HERE}/usr/bin/mcpelauncher-client" "$@"
           EOF
           chmod +x AppDir/AppRun
           
-          cat << 'EOF' > AppDir/usr/share/applications/mcpelauncher-cli.desktop
+          # 5. Configuración de escritorio e icono
+          cat << 'EOF' > AppDir/mcpelauncher-cli.desktop
           [Desktop Entry]
           Type=Application
           Name=MCPELauncher_CLI
@@ -85,14 +92,9 @@ jobs:
           Terminal=true
           EOF
           
-          cat << 'EOF' > AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>
-          EOF
+          echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="blue"/></svg>' > AppDir/mcpelauncher.svg
 
-          # Copiar el archivo desktop y el icono a la raíz de AppDir para appimagetool
-          cp AppDir/usr/share/applications/mcpelauncher-cli.desktop AppDir/
-          cp AppDir/usr/share/icons/hicolor/scalable/apps/mcpelauncher.svg AppDir/
-
+          # 6. Descargar y ejecutar appimagetool
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage
           chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
