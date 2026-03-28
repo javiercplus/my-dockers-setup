@@ -42,8 +42,8 @@ jobs:
             -DBUILD_CLIENT=ON \
             -DCURL_EXT_EXTRA_OPTIONS=-DCURL_USE_LIBPSL=OFF \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-            -DCMAKE_C_FLAGS='-m32 -msse3 -mfpmath=sse' \
-            -DCMAKE_CXX_FLAGS='-m32 -msse3 -mfpmath=sse' \
+            -DCMAKE_C_FLAGS='-m32 -msse3' \
+            -DCMAKE_CXX_FLAGS='-m32 -msse3' \
             -DCMAKE_EXE_LINKER_FLAGS='-m32' \
             -DCMAKE_FIND_ROOT_PATH='/usr/lib/i386-linux-gnu;/usr/include/i386-linux-gnu;/usr/lib;/usr/include' \
             -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
