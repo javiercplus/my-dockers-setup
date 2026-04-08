@@ -1,0 +1,23 @@
+name: CMake Build
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Qt6 and dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential qt6-base-dev
+
+    - name: Configure CMake
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build Project
+      run: cmake --build build --config Release
