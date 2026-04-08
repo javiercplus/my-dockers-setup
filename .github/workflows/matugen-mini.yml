@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - name: Clone Codeberg repository
+      run: git clone https://codeberg.org/javiercplus/mini-matugen-j.git
 
     - name: Install Qt6 and dependencies
       run: |
@@ -17,7 +17,13 @@ jobs:
         sudo apt-get install -y cmake build-essential qt6-base-dev
 
     - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B build -S mini-matugen-j -DCMAKE_BUILD_TYPE=Release
 
     - name: Build Project
       run: cmake --build build --config Release
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: mini-matugen-j-linux
+        path: build/mini-matugen-j
