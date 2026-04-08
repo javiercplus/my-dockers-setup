@@ -1,4 +1,4 @@
-name: CMake Build
+name: MATUGEN MINI
 
 on:
   workflow_dispatch: 
