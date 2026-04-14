@@ -11,11 +11,21 @@ jobs:
       - name: Instalar dependencias de compilación
         run: |
           sudo apt-get update
-          sudo apt-get install -y meson ninja-build python3-mako flex bison pkg-config \
-            libdrm-dev libx11-dev libxext-dev libxdamage-dev libxcb-glx0-dev \
-            libxcb-dri2-0-dev libxcb-dri3-dev libxcb-present-dev libxshmfence-dev \
-            libxxf86vm-dev libxrandr-dev libglvnd-dev libglvnd-core-dev \
-            libwayland-dev wayland-protocols libunwind-dev valgrind
+          sudo apt-get install -y \
+            meson ninja-build pkg-config bison flex \
+            python3-mako python3-packaging \
+            libz-dev libzstd-dev libexpat1-dev libelf-dev \
+            libdrm-dev \
+            libx11-dev libxext-dev libxdamage-dev libxshmfence-dev \
+            libxxf86vm-dev libxrandr-dev x11proto-dev \
+            libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev \
+            libxcb-present-dev libxcb-shm0-dev libxcb-sync-dev \
+            libxcb-xfixes0-dev libxcb-randr0-dev \
+            libwayland-dev wayland-protocols libwayland-egl-backend-dev \
+            libglvnd-dev libglvnd-core-dev \
+            libunwind-dev valgrind \
+            llvm-dev libvulkan-dev glslang-tools spirv-tools \
+            libsensors4-dev
 
       - name: Clonar repositorio de Mesa (Rama Amber)
         run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
