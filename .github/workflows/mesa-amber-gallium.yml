@@ -11,10 +11,11 @@ jobs:
       - name: Instalar dependencias de compilación
         run: |
           sudo apt-get update
-          sudo apt-get install -y meson ninja-build python3-mako flex bison pkg-config \
+          sudo apt-get install -y meson build-dep mesa ninja-build python3-mako flex bison pkg-config \
             libdrm-dev libx11-dev libxext-dev libxdamage-dev libxcb-glx0-dev \
             libxcb-dri2-0-dev libxcb-dri3-dev libxcb-present-dev libxshmfence-dev \
-            libxxf86vm-dev libxrandr-dev libglvnd-dev libglvnd-core-dev
+            libxxf86vm-dev libxrandr-dev libglvnd-dev libglvnd-core-dev \
+            libwayland-dev wayland-protocols libunwind-dev valgrind
 
       - name: Clonar repositorio de Mesa (Rama Amber)
         run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
