@@ -27,21 +27,22 @@ jobs:
             llvm-dev libvulkan-dev glslang-tools spirv-tools \
             libsensors-dev
             
-      - name: Clonar repositorio de Mesa (Rama Amber)
-        run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
-
       - name: Configurar el entorno con Meson
         run: |
           cd mesa
-          meson setup build -Damber=true --buildtype=release
+          # Añadimos --prefix para decirle a Meson dónde "instalar" los archivos resultantes
+          meson setup build -Damber=true --buildtype=release --prefix=$(pwd)/mesa-dist
 
-      - name: Compilar el código con Ninja
+      - name: Compilar e instalar el código
         run: |
           cd mesa
           ninja -C build
+          # Extrae los binarios limpios a la carpeta 'mesa-dist' especificada en el prefix
+          meson install -C build
 
       - name: Subir binarios compilados
         uses: actions/upload-artifact@v4
         with:
           name: mesa-amber-build
-          path: mesa/build/
+          # Subimos solo la carpeta limpia con el resultado final
+          path: mesa/mesa-dist/
