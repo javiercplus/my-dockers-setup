@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     - name: Instalar todas las dependencias de compilación para Mesa
-       run: |
+      - name: Instalar todas las dependencias de compilación para Mesa
+        run: |
           sudo apt-get update
           sudo apt-get install -y \
             meson ninja-build pkg-config bison flex \
@@ -26,6 +26,7 @@ jobs:
             libunwind-dev valgrind \
             llvm-dev libvulkan-dev glslang-tools spirv-tools \
             libsensors-dev
+            
       - name: Clonar repositorio de Mesa (Rama Amber)
         run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
 
