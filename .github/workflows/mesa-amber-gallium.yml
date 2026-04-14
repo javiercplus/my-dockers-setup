@@ -9,7 +9,7 @@ jobs:
 
     steps:
      - name: Instalar todas las dependencias de compilación para Mesa
-        run: |
+       run: |
           sudo apt-get update
           sudo apt-get install -y \
             meson ninja-build pkg-config bison flex \
