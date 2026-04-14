@@ -1,4 +1,4 @@
-name: Build Mesa (Amber Branch)
+name: Build Mesa Amber Branch
 
 on:
   workflow_dispatch:
