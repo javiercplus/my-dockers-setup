@@ -14,8 +14,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            meson ninja-build pkg-config bison flex \
-            python3-mako python3-packaging \
+            pkg-config bison flex \
+            python3-mako python3-packaging python3-pip \
             libz-dev libzstd-dev libexpat1-dev libelf-dev \
             libdrm-dev \
             libx11-dev libxext-dev libxdamage-dev libxshmfence-dev \
@@ -29,8 +29,11 @@ jobs:
             llvm-dev libvulkan-dev glslang-tools spirv-tools \
             libsensors-dev
 
+      - name: Instalar Meson y Ninja vía pip
+        run: sudo pip3 install --break-system-packages meson ninja
+
       - name: Clonar repositorio de Mesa (Rama Amber)
-        run: git clone https://gitlab.freedesktop.org/mesa/mesa.git
+        run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
 
       - name: Configurar el entorno con Meson
         run: |
