@@ -36,7 +36,7 @@ jobs:
         run: |
           cd mesa
           # Configuramos la ruta de instalación a la carpeta 'mesa-dist'
-          meson setup build -Damber=true -D gallium-drivers=crocus,swrast -D dri3=enabled -D gallium-nine=true   -D gallium-xa=false --buildtype=release --prefix=$(pwd)/mesa-dist
+          meson setup build -Damber=true --buildtype=release --prefix=$(pwd)/mesa-dist
 
       - name: Compilar e instalar el código
         run: |
