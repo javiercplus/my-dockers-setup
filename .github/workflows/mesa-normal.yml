@@ -32,14 +32,14 @@ jobs:
       - name: Instalar Meson y Ninja vía pip
         run: sudo pip3 install --break-system-packages meson ninja
 
-      - name: Clonar repositorio de Mesa (Rama Amber)
-        run: git clone -b amber https://gitlab.freedesktop.org/mesa/mesa.git
+      - name: Clonar repositorio de Mesa 
+        run: git clone https://gitlab.freedesktop.org/mesa/mesa.git
 
       - name: Configurar el entorno con Meson
         run: |
           cd mesa
           # Configuramos la ruta de instalación a la carpeta 'mesa-dist'
-          meson setup build -Damber=true -D glx=gallium-xlib  -D gallium-drivers=crocus,swrast -D dri3=enabled -D gallium-nine=true   -D gallium-xa=false --buildtype=release --prefix=$(pwd)/mesa-dist
+          meson setup build -D glx=gallium-xlib  -D gallium-drivers=crocus,swrast -D dri3=enabled -D gallium-nine=true   -D gallium-xa=false --buildtype=release --prefix=$(pwd)/mesa-dist
 
       - name: Compilar e instalar el código
         run: |
