@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clonar repositorio desde Codeberg
-      run: git clone https://codeberg.org/javiercplus/j-micx.git .
+    - name: Clonar repositorio y submódulos desde Codeberg
+      run: git clone --recurse-submodules https://codeberg.org/javiercplus/j-micx.git .
 
     - name: Instalar dependencias del sistema
       run: |
@@ -29,7 +29,7 @@ jobs:
           libfuse2
 
     - name: Compilar binarios y servidor Java
-      run: make 
+      run: make all
 
     - name: Construir paquete AppImage
       run: make appimage
