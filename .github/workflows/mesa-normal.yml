@@ -1,56 +1,41 @@
-name: Build Mesa GALLIUM Branch
+name: Build j-micx from Codeberg
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
-  build-mesa-gallium:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Instalar todas las dependencias de compilación para Mesa
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config bison flex \
-            python3-mako python3-packaging python3-pip \
-            libz-dev libzstd-dev libexpat1-dev libelf-dev \
-            libdrm-dev \
-            libx11-dev libxext-dev libxdamage-dev libxshmfence-dev \
-            libxxf86vm-dev libxrandr-dev x11proto-dev libx11-xcb-dev \
-            libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev \
-            libxcb-present-dev libxcb-shm0-dev libxcb-sync-dev \
-            libxcb-xfixes0-dev libxcb-randr0-dev libxcb-keysyms1-dev \
-            libwayland-dev wayland-protocols libwayland-egl-backend-dev \
-            libglvnd-dev libglvnd-core-dev \
-            libunwind-dev valgrind \
-            llvm-dev libvulkan-dev glslang-tools spirv-tools \
-            libsensors-dev
+    - name: Clonar repositorio y submódulos desde Codeberg
+      run: git clone --recurse-submodules https://codeberg.org/javiercplus/j-micx.git .
 
-      - name: Instalar Meson y Ninja vía pip
-        run: sudo pip3 install --break-system-packages meson ninja
+    - name: Instalar dependencias del sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          pkg-config \
+          libsdl2-dev \
+          libsdl2-image-dev \
+          pulseaudio-utils \
+          libgl1-mesa-dev \
+          libqrencode-dev \
+          openjdk-17-jdk \
+          openssl \
+          libfuse2
 
-      - name: Clonar repositorio de Mesa 
-        run: git clone https://gitlab.freedesktop.org/mesa/mesa.git
+    - name: Compilar binarios y servidor Java
+      run: make all
 
-      - name: Configurar el entorno con Meson
-        run: |
-          cd mesa
-          # Configuramos la ruta de instalación a la carpeta 'mesa-dist'
-          meson setup build  -D gallium-drivers=crocus,i915 -D gallium-nine=true   -D gallium-xa=false --buildtype=release --prefix=$(pwd)/mesa-dist
+    - name: Construir paquete AppImage
+      run: make appimage
 
-      - name: Compilar e instalar el código
-        run: |
-          cd mesa
-          ninja -C build
-          # Extrae los binarios limpios a la carpeta 'mesa-dist'
-          meson install -C build
-
-      - name: Subir binarios compilados
-        uses: actions/upload-artifact@v4
-        with:
-          name: mesa-amber-build
-          # Subimos solo la carpeta con el resultado final
-          path: mesa/mesa-dist/
+    - name: Subir artefacto AppImage
+      uses: actions/upload-artifact@v4
+      with:
+        name: j-micx-appimage
+        path: ./*.AppImage
