@@ -15,10 +15,10 @@ jobs:
       image: debian:12.8
 
     steps:
-    - name: Instalar Git y certificados
+    - name: Instalar Git y utilidades de red
       run: |
         apt-get update
-        apt-get install -y git ca-certificates wget file
+        apt-get install -y git ca-certificates wget curl file
 
     - name: Clonar repositorio y preparar ImGui
       run: |
@@ -43,34 +43,16 @@ jobs:
           libqrencode-dev \
           openjdk-17-jdk \
           openssl \
-          libfuse2
+          libfuse2 \
+          imagemagick
 
-    - name: Compilar binarios y servidor Java
-      run: make all
-
-    - name: Construir AppImage personalizado
+    - name: Ejecutar script de construcción AppImage
       run: |
-        wget -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-        chmod +x linuxdeploy
-
-        cp resources/brand/icon.png j-micx.png
-
-        cat <<EOF > j-micx.desktop
-        [Desktop Entry]
-        Name=j-micx
-        Exec=j-micx
-        Icon=j-micx
-        Type=Application
-        Categories=AudioVideo;
-        EOF
-
-        mkdir -p AppDir/usr/bin
-        cp -r bin/* AppDir/usr/bin/
-        
-        ./linuxdeploy --appdir AppDir --executable AppDir/usr/bin/j-micx --desktop-file j-micx.desktop --icon-file j-micx.png --output appimage
+        chmod +x appimage/build-appimage.sh
+        ./appimage/build-appimage.sh
 
     - name: Subir artefacto AppImage
       uses: actions/upload-artifact@v4
       with:
         name: j-micx-appimage
-        path: ./*.AppImage
+        path: j-micx.AppImage
