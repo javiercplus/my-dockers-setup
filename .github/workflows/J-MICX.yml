@@ -22,6 +22,7 @@ jobs:
 
     - name: Clonar repositorio y preparar ImGui
       run: |
+        git config --global --add safe.directory '*'
         git clone https://codeberg.org/javiercplus/j-micx.git .
         git submodule update --init --recursive
         
