@@ -1,15 +1,25 @@
-name: Build j-micx from Codeberg
+name: Build j-micx on Debian 12.8
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
 
+env:
+  APPIMAGE_EXTRACT_AND_RUN: 1
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: debian:12.8
 
     steps:
+    - name: Instalar Git y certificados
+      run: |
+        apt-get update
+        apt-get install -y git ca-certificates wget file
+
     - name: Clonar repositorio y preparar ImGui
       run: |
         git clone https://codeberg.org/javiercplus/j-micx.git .
@@ -22,8 +32,7 @@ jobs:
 
     - name: Instalar dependencias del sistema
       run: |
-        sudo apt-get update
-        sudo apt-get install -y \
+        apt-get install -y \
           build-essential \
           pkg-config \
           libsdl2-dev \
@@ -38,8 +47,24 @@ jobs:
     - name: Compilar binarios y servidor Java
       run: make all
 
-    - name: Construir paquete AppImage
-      run: make appimage
+    - name: Construir AppImage personalizado
+      run: |
+        wget -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy
+
+        cat <<EOF > j-micx.desktop
+        [Desktop Entry]
+        Name=j-micx
+        Exec=j-micx
+        Icon=j-micx
+        Type=Application
+        Categories=AudioVideo;
+        EOF
+
+        mkdir -p AppDir/usr/bin
+        cp -r bin/* AppDir/usr/bin/
+        
+        ./linuxdeploy --appdir AppDir --executable AppDir/usr/bin/j-micx --desktop-file j-micx.desktop --icon-file resources/brand/logo.png --output appimage
 
     - name: Subir artefacto AppImage
       uses: actions/upload-artifact@v4
