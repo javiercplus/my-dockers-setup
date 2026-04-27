@@ -10,8 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clonar repositorio y submódulos desde Codeberg
-      run: git clone --recurse-submodules https://codeberg.org/javiercplus/j-micx.git .
+    - name: Clonar repositorio y preparar ImGui
+      run: |
+        git clone https://codeberg.org/javiercplus/j-micx.git .
+        git submodule update --init --recursive
+        
+        if [ ! -f "imgui/imgui.h" ]; then
+          rm -rf imgui
+          git clone --depth 1 https://github.com/ocornut/imgui.git imgui
+        fi
 
     - name: Instalar dependencias del sistema
       run: |
