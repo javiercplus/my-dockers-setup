@@ -1,18 +1,17 @@
-name: Build j-micx
+name: Build j-micx from Codeberg
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout del repositorio
-      uses: actions/checkout@v4
+    - name: Clonar repositorio desde Codeberg
+      run: git clone https://codeberg.org/javiercplus/j-micx.git .
 
     - name: Instalar dependencias del sistema
       run: |
@@ -29,11 +28,8 @@ jobs:
           openssl \
           libfuse2
 
-    - name: Preparar ImGui
-      run: make setup
-
     - name: Compilar binarios y servidor Java
-      run: make all
+      run: make 
 
     - name: Construir paquete AppImage
       run: make appimage
