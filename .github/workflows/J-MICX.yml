@@ -24,10 +24,7 @@ jobs:
       run: |
         git config --global --add safe.directory '*'
         git clone https://codeberg.org/javiercplus/j-micx.git .
-        if [ ! -f "imgui/imgui.h" ]; then
-          rm -rf imgui
-          git clone --depth 1 https://github.com/ocornut/imgui.git imgui
-        fi
+        git submodule update --init --recursive
 
     - name: Instalar dependencias del sistema
       run: |
