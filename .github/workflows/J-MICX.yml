@@ -24,8 +24,6 @@ jobs:
       run: |
         git config --global --add safe.directory '*'
         git clone https://codeberg.org/javiercplus/j-micx.git .
-        git submodule update --init --recursive
-        
         if [ ! -f "imgui/imgui.h" ]; then
           rm -rf imgui
           git clone --depth 1 https://github.com/ocornut/imgui.git imgui
