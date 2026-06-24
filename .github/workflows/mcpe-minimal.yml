@@ -54,7 +54,7 @@ jobs:
              ninja
              cd ..
              cd ..
-             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract build/mcpelauncher-client/mcpelauncher-client 
+             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract mcpelauncher-client/mcpelauncher-client 
           "
 
       - name: Subir Binarios
