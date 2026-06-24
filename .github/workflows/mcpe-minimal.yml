@@ -54,7 +54,11 @@ jobs:
              ninja
              cd ..
              cd ..
-             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract mcpelauncher-client/mcpelauncher-client 
+             mkdir upload
+             cp  mcpe-extract/build/mcpelauncher-extract upload/
+             cp mcpelauncher-client/mcpelauncher-clien upload/
+             cd upload
+             tar -cvf binarios.tar mcpelauncher-extract mcpelauncher-client 
           "
 
       - name: Subir Binarios
@@ -62,5 +66,5 @@ jobs:
         with:
           name: mcpelauncher-ng-debian13
           path: |
-            build/binarios.tar
+            build/upload/binarios.tar
           if-no-files-found: warn
