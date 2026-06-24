@@ -25,8 +25,8 @@ jobs:
       - name: Compilación con Clang y Optimizaciones
         run: |
           docker run --rm -v ${{ github.workspace }}:/project mcpelauncher-builder /bin/bash -c "
-            wget https://huggingface.co/datasets/ccoffee20/trinity-installer/resolve/main/patch.sh
-            bash patch.sh
+            wget https://huggingface.co/datasets/ccoffee20/trinity-installer/resolve/main/patch.sh &&
+            bash patch.sh &&
             mkdir -p build && cd build
             CC=clang CXX=clang++ cmake .. \
               -DGAMEWINDOW_SYSTEM=SDL3 \
