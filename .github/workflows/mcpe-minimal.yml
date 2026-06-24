@@ -1,0 +1,65 @@
+name: Compilar mcpelauncher WAYLAND minimal
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Clonar Manifiesto 
+        uses: actions/checkout@v4
+        with:
+          repository: 'minecraft-linux/mcpelauncher-manifest'
+          ref: 'ng'
+          submodules: 'recursive'
+          
+        
+      - name: Descargar Dockerfile de construcción
+        run: |
+          curl -L https://github.com/javiercplus/my-dockers-setup/raw/refs/heads/main/Dockerfile.build -o Dockerfile.build
+      
+      - name: Construir imagen de entorno
+        run: docker build -t mcpelauncher-builder -f Dockerfile.build .
+
+      - name: Compilación con Clang y Optimizaciones
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/project mcpelauncher-builder /bin/bash -c "
+            wget https://huggingface.co/datasets/ccoffee20/trinity-installer/resolve/main/patch.sh &&
+            bash patch.sh &&
+            mkdir -p build && cd build
+            CC=clang CXX=clang++ cmake .. \
+              -DGAMEWINDOW_SYSTEM=SDL3 \
+              -DENABLE_DEV_PATHS=OFF \
+              -DJNI_USE_JNIVM=ON \
+              -DBUILD_UI=OFF \
+              -DBUILD_CLIENT=ON \
+              -DBUILD_WEBVIEW=OFF \
+              -DUSE_OWN_CURL=OFF \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_C_FLAGS=-DNDEBUG \
+              -DCMAKE_CXX_FLAGS=-DNDEBUG \
+              -DCMAKE_POLICY_VERSION_MINIMUM=3.5 
+            make -j$(nproc) &&
+            #MCPE-EXTRACT
+            git clone https://codeberg.org/javiercplus/mcpe-extract.git &&
+            cd mcpe-extract
+            mkdir -p build && cd build
+            cmake .. \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+              -G Ninja \
+            -Wno-dev
+             ninja
+             cd ..
+             cd ..
+             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract mcpelauncher/build/mcpelauncher-client/mcpelauncher-client 
+          "
+
+      - name: Subir Binarios
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcpelauncher-ng-debian13
+          path: |
+            binarios.tar
+          if-no-files-found: warn
