@@ -62,5 +62,5 @@ jobs:
         with:
           name: mcpelauncher-ng-debian13
           path: |
-            binarios.tar
+            build/binarios.tar
           if-no-files-found: warn
