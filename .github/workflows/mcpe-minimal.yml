@@ -27,6 +27,7 @@ jobs:
         run: |
           docker run --rm -v ${{ github.workspace }}:/project mcpelauncher-builder /bin/bash -c "
             wget https://huggingface.co/datasets/ccoffee20/trinity-installer/resolve/main/patch.sh &&
+            git config --global --add safe.directory /project/libc-shim && git config --global --add safe.directory /project/mcpelauncher-client &&
             bash patch.sh &&
             mkdir -p build && cd build
             CC=clang CXX=clang++ cmake .. \
@@ -53,7 +54,7 @@ jobs:
              ninja
              cd ..
              cd ..
-             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract mcpelauncher/build/mcpelauncher-client/mcpelauncher-client 
+             tar -cvf binarios.tar mcpe-extract/build/mcpelauncher-extract build/mcpelauncher-client/mcpelauncher-client 
           "
 
       - name: Subir Binarios
