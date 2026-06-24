@@ -56,7 +56,7 @@ jobs:
              cd ..
              mkdir upload
              cp  mcpe-extract/build/mcpelauncher-extract upload/
-             cp mcpelauncher-client/mcpelauncher-clien upload/
+             cp mcpelauncher-client/mcpelauncher-client upload/
              cd upload
              tar -cvf binarios.tar mcpelauncher-extract mcpelauncher-client 
           "
