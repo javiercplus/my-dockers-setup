@@ -51,3 +51,9 @@ jobs:
       with:
         name: j-micx-appimage
         path: j-micx.AppImage
+    - name: Subir a Release 
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: unstable
+        files: |
+          j-micx-appimage
