@@ -65,3 +65,9 @@ jobs:
           name: oxicord-appimage
           path: Oxicord-*.AppImage
           retention-days: 7
+      - name: Subir a Release 
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: unstable
+          files: |
+            Oxicord-*.AppImage
