@@ -112,4 +112,4 @@ jobs:
         with:
           tag_name: unstable
           files: |
-            mcpelauncher-cli-32bit-appimage
+            mcpelauncher-cli-32bit.AppImage 
