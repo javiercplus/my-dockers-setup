@@ -107,9 +107,9 @@ jobs:
           chmod +x appimagetool-i686.AppImage
           ./appimagetool-i686.AppImage AppDir mcpelauncher-cli-32bit.AppImage
           
-      - name: Subir AppImage
-        uses: actions/upload-artifact@v4
+      - name: Subir a Release Unstable
+        uses: softprops/action-gh-release@v2
         with:
-          name: mcpelauncher-cli-32bit-appimage
-          path: mcpelauncher-cli-32bit.AppImage
-          if-no-files-found: error
+          tag_name: unstable
+          files: |
+            mcpelauncher-cli-32bit-appimage
