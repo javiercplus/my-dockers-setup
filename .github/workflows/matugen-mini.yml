@@ -20,10 +20,16 @@ jobs:
       run: cmake -B build -S mini-matugen-j -DCMAKE_BUILD_TYPE=Release
 
     - name: Build Project
-      run: cmake --build build --config Release
+      run: cmake --build build --config Release && tar -cvf mini-matugen.tar build
 
     - name: Upload executable
       uses: actions/upload-artifact@v4
       with:
         name: mini-matugen-j-linux
         path: build/mini-matugen-j
+    - name: Subir a Release 
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: unstable
+        files: |
+          mini-matugen.tar
