@@ -17,10 +17,16 @@ jobs:
         run: ./make.sh deps
 
       - name: Compilar el código fuente
-        run: ./make.sh build
+        run: ./make.sh build && tar -cvf nchat.tar build
 
       - name: Guardar el ejecutable compilado
         uses: actions/upload-artifact@v4
         with:
           name: nchat-ubuntu-binario
           path: build/
+      - name: Subir a Release 
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: unstable
+          files: |
+            nchat.tar
