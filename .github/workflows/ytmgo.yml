@@ -1,0 +1,37 @@
+name: YMGO 32BIT
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-32bit-static:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout external repository
+        uses: actions/checkout@v4
+        with:
+          repository: anas1412/ytmgo
+
+      - name: Install 32-bit dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib libc6-dev-i386 libc6:i386
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build static 32-bit
+        # CGO_ENABLED=0 garantiza una compilación estática pura.
+        # -extldflags '-static' refuerza al enlazador que no use librerías dinámicas.
+        run: GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -ldflags="-s -w -extldflags '-static'" -o ytmgo-32bit .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ytmgo-32bit
+          path: ytmgo-32bit
