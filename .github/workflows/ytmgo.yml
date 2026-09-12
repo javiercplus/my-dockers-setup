@@ -35,3 +35,10 @@ jobs:
         with:
           name: ytmgo-32bit
           path: ytmgo-32bit
+
+      - name: Subir a Release 
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: unstable
+          files: |
+            ytmgo-32bit
